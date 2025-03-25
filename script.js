@@ -1,72 +1,50 @@
-const API_KEY = "AIzaSyCZ7QD3305A8Yii4N7MTDbhMArIMFMHibY"; // ضع مفتاح API هنا
-let videoIds = [];
 let countdownInterval;
 
-async function fetchVideos() {
-    let username = document.getElementById("channelUrl").value;
+function extractVideoId(url) {
+    let videoId = null;
     
-    // تحقق من إدخال اسم المستخدم
-    if (!username) {
-        alert("❌ الرجاء إدخال اسم المستخدم!");
-        return;
+    if (url.includes("youtube.com/watch?v=")) {
+        videoId = url.split("v=")[1]?.split("&")[0];
+    } else if (url.includes("youtu.be/")) {
+        videoId = url.split("youtu.be/")[1]?.split("?")[0];
     }
 
-    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forUsername=${username}&key=${API_KEY}`;
-
-    try {
-        let response = await fetch(apiUrl);
-        let data = await response.json();
-
-        // تحقق من وجود القناة
-        if (!data.items || data.items.length === 0) {
-            alert("❌ لم يتم العثور على قناة بهذا الاسم!");
-            return;
-        }
-
-        let playlistId = data.items[0].contentDetails.relatedPlaylists.uploads;
-        let videosApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&playlistId=${playlistId}&key=${API_KEY}`;
-
-        let videosResponse = await fetch(videosApiUrl);
-        let videosData = await videosResponse.json();
-
-        videoIds = videosData.items.map(item => item.snippet.resourceId.videoId).filter(id => id);
-        
-        if (videoIds.length === 0) {
-            alert("❌ لم يتم العثور على فيديوهات في القناة!");
-        } else {
-            alert(`✅ تم جلب ${videoIds.length} فيديو من القناة!`);
-        }
-    } catch (error) {
-        console.error("خطأ في جلب الفيديوهات:", error);
-        alert("❌ حدث خطأ أثناء جلب الفيديوهات.");
-    }
+    return videoId;
 }
 
-function startRandomVideos() {
-    if (videoIds.length === 0) {
-        alert("❌ يرجى جلب الفيديوهات أولاً!");
-        return;
-    }
-
+function startVideos() {
+    let url = document.getElementById("videoUrl").value;
+    let count = parseInt(document.getElementById("videoCount").value);
     let watchTime = parseInt(document.getElementById("watchTime").value) * 1000;
     let videosContainer = document.getElementById("videosContainer");
+    let countdownElement = document.getElementById("countdown");
 
-    videosContainer.innerHTML = "";
+    let videoId = extractVideoId(url);
 
-    let randomVideoId = videoIds[Math.floor(Math.random() * videoIds.length)];
-    let embedUrl = `https://www.youtube.com/embed/${randomVideoId}?autoplay=1&mute=1&loop=1&playlist=${randomVideoId}&controls=0`;
+    if (!videoId) {
+        alert("❌ الرجاء إدخال رابط فيديو يوتيوب صالح!");
+        return;
+    }
+    
+    videosContainer.innerHTML = ""; 
 
-    let iframe = document.createElement("iframe");
-    iframe.src = embedUrl;
-    iframe.allow = "autoplay; encrypted-media";
-    iframe.width = "300";
-    iframe.height = "170";
-    videosContainer.appendChild(iframe);
+    let embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0`;
 
+    for (let i = 0; i < count; i++) {
+        let iframe = document.createElement("iframe");
+        iframe.src = embedUrl;
+        iframe.allow = "autoplay; encrypted-media";
+        iframe.width = "300";
+        iframe.height = "170";
+        videosContainer.appendChild(iframe);
+    }
+
+    // تشغيل العداد التنازلي
     startCountdown(watchTime / 1000);
 
     setTimeout(() => {
-        startRandomVideos(); // تشغيل فيديو جديد بعد انتهاء المدة
+        videosContainer.innerHTML = "";
+        startVideos();
     }, watchTime);
 }
 
@@ -79,7 +57,7 @@ function stopVideos() {
 function startCountdown(seconds) {
     let countdownElement = document.getElementById("countdown");
     countdownElement.textContent = `إعادة التشغيل خلال: ${seconds} ثانية`;
-
+    
     countdownInterval = setInterval(() => {
         seconds--;
         if (seconds > 0) {
