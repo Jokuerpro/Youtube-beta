@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشاهدات يوتيوب التلقائية</title>
-    <link rel="stylesheet" href="style.css">
+    <title>مشاهدات يوتيوب تلقائية</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <div class="container">
     <h2>مشاهدات يوتيوب التلقائية</h2>
-    <input type="text" id="channelUrl" placeholder="أدخل رابط القناة">
-    <button onclick="fetchVideos()">جلب الفيديوهات</button>
-    
+    <input type="text" id="videoUrl" placeholder="أدخل رابط فيديو يوتيوب">
+    <input type="number" id="videoCount" min="1" max="10" value="3" placeholder="عدد مرات التشغيل">
     <input type="number" id="watchTime" min="10" max="600" value="60" placeholder="مدة المشاهدة (بالثواني)">
-    <button onclick="startRandomVideos()">تشغيل عشوائي</button>
+    <button onclick="startVideos()">تشغيل الفيديو</button>
     <button onclick="stopVideos()" class="danger">إيقاف الفيديوهات</button>
-
     <p id="countdown"></p> <!-- عداد تنازلي -->
 </div>
 
 <div id="videosContainer"></div>
-
-<script src="script.js"></script>
+</div>
+    <script src="script.js"></script>
 </body>
 </html>
