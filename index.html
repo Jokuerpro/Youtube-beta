@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاهدات يوتيوب التلقائية</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>مشاهدات يوتيوب التلقائية</h2>
+    <input type="text" id="channelUrl" placeholder="أدخل رابط القناة">
+    <button onclick="fetchVideos()">جلب الفيديوهات</button>
+    
+    <input type="number" id="watchTime" min="10" max="600" value="60" placeholder="مدة المشاهدة (بالثواني)">
+    <button onclick="startRandomVideos()">تشغيل عشوائي</button>
+    <button onclick="stopVideos()" class="danger">إيقاف الفيديوهات</button>
+
+    <p id="countdown"></p> <!-- عداد تنازلي -->
+</div>
+
+<div id="videosContainer"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

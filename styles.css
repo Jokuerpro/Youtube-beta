@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+}
+
+input, button {
+    display: block;
+    width: 80%;
+    margin: 10px auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button.danger {
+    background-color: #dc3545;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+#countdown {
+    font-size: 18px;
+    color: red;
+    margin-top: 10px;
+}
+
+#videosContainer {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+iframe {
+    margin: 5px;
+    border-radius: 10px;
+}
