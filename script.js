@@ -2,31 +2,34 @@ const API_KEY = "AIzaSyCZ7QD3305A8Yii4N7MTDbhMArIMFMHibY"; // ضع مفتاح AP
 let videoIds = [];
 let countdownInterval;
 
-function extractChannelId(channelUrl) {
-    let channelId = null;
-    if (channelUrl.includes("youtube.com/channel/")) {
-        channelId = channelUrl.split("channel/")[1]?.split("?")[0];
-    } else if (channelUrl.includes("youtube.com/@")) {
-        channelId = channelUrl.split("@")[1]?.split("?")[0];
-    }
-    return channelId;
-}
-
 async function fetchVideos() {
-    let channelUrl = document.getElementById("channelUrl").value;
-    let channelId = extractChannelId(channelUrl);
-
-    if (!channelId) {
-        alert("❌ الرجاء إدخال رابط قناة صالح!");
+    let username = document.getElementById("channelUrl").value;
+    
+    // تحقق من إدخال اسم المستخدم
+    if (!username) {
+        alert("❌ الرجاء إدخال اسم المستخدم!");
         return;
     }
 
-    let apiUrl = `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=20`;
+    let apiUrl = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forUsername=${username}&key=${API_KEY}`;
 
     try {
         let response = await fetch(apiUrl);
         let data = await response.json();
-        videoIds = data.items.map(item => item.id.videoId).filter(id => id);
+
+        // تحقق من وجود القناة
+        if (!data.items || data.items.length === 0) {
+            alert("❌ لم يتم العثور على قناة بهذا الاسم!");
+            return;
+        }
+
+        let playlistId = data.items[0].contentDetails.relatedPlaylists.uploads;
+        let videosApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&playlistId=${playlistId}&key=${API_KEY}`;
+
+        let videosResponse = await fetch(videosApiUrl);
+        let videosData = await videosResponse.json();
+
+        videoIds = videosData.items.map(item => item.snippet.resourceId.videoId).filter(id => id);
         
         if (videoIds.length === 0) {
             alert("❌ لم يتم العثور على فيديوهات في القناة!");
